@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote of the Day</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        .quote-box { margin: 20px auto; padding: 20px; border: 1px solid #ccc; width: 50%; }
+    </style>
+</head>
+<body>
+    <h1>Quote of the Day</h1>
+    <div class="quote-box">
+        <p id="quote">Loading...</p>
+        <p><strong id="author"></strong></p>
+        <button onclick="fetchQuote()">Get New Quote</button>
+    </div>
+    <input type="text" id="searchAuthor" placeholder="Search by author">
+    <button onclick="searchQuotes()">Search</button>
+    <div id="searchResults"></div>
+
+    <script>
+        async function fetchQuote() {
+            const response = await fetch("http://localhost:5000/random-quote");
+            const data = await response.json();
+            document.getElementById("quote").innerText = data.content;
+            document.getElementById("author").innerText = "- " + data.author;
+        }
+
+        async function searchQuotes() {
+            const author = document.getElementById("searchAuthor").value;
+            const response = await fetch(`http://localhost:5000/search?author=${author}`);
+            const data = await response.json();
+            const results = document.getElementById("searchResults");
+            results.innerHTML = data.results.map(q => `<p>"${q.content}" - ${q.author}</p>`).join("");
+        }
+
+        fetchQuote();
+    </script>
+</body>
+</html>
